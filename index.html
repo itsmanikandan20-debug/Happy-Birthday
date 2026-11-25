@@ -560,7 +560,7 @@ async function popBalloon(b){b.popped=true;popped++;b.g.setAttribute('opacity',0
   tween(250,k=>b.str.setAttribute('opacity',1-k*.4));
   await tween(260,k=>bp(.4+k),easeBack);await tween(300,k=>{b.burst.setAttribute('opacity',1-k);bp(1.4+k*.4)})}
 
-async function approve(){badge.setAttribute('opacity',1);await tween(420,k=>popAt(badge,332,170,k),easeBack);
+async function approve(){[badge,knife,sv,pin].forEach(g=>art.appendChild(g));badge.setAttribute('opacity',1);await tween(420,k=>popAt(badge,332,170,k),easeBack);
   $('title').textContent=who?`Happy Birthday, ${who}! 🎉`:'Happy Birthday! 🎉';$('title').classList.add('pop');setTimeout(()=>$('title').classList.remove('pop'),500);
   $('sub').textContent='Grid fixed. Design approved. Party mode on.';
   say('<b>Approved ✓</b> Now tap the cake to <b>cut it</b> 🔪');
