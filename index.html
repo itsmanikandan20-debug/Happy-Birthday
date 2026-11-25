@@ -6,7 +6,9 @@
 <title>Happy Birthday!</title>
 <style>
   html,body{margin:0;min-height:100%;color:#1d1a18;background-color:#ffe6ea;background-image:radial-gradient(#ffc83d 1.7px,transparent 2.3px),radial-gradient(#66cdea 1.7px,transparent 2.3px),radial-gradient(#f0563d 1.5px,transparent 2.1px),radial-gradient(#2fb5a7 1.5px,transparent 2.1px);background-size:47px 47px,61px 61px,73px 73px,89px 89px;background-position:0 0,23px 31px,41px 9px,12px 55px;font-family:"Comic Neue","Chalkboard SE","Segoe Print","Bradley Hand",ui-rounded,system-ui,sans-serif}
-  .wrap{max-width:560px;margin:0 auto;padding:16px 12px 26px;text-align:center}
+  .wrap{max-width:560px;margin:0 auto;padding:16px 12px 26px;text-align:center;box-sizing:border-box;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+  .scene{flex:1;display:flex;align-items:center;justify-content:center;padding:8px 0}
+  .foot{min-height:96px}
   h1{font-size:clamp(24px,6.4vw,38px);margin:8px 0 2px;line-height:1.15;transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
   h1.pop{transform:scale(1.08) rotate(-1.5deg)}
   .sub{font-size:16px;opacity:.8;min-height:22px;margin-bottom:2px}
@@ -23,7 +25,7 @@
 <div class="wrap">
   <h1 id="title">Design review needed&nbsp;🔍</h1>
   <div class="sub" id="sub"></div>
-  <svg id="stage" viewBox="0 36 480 524" aria-label="An ink-sketch birthday cake on a table">
+  <div class="scene"><svg id="stage" viewBox="0 36 480 524" aria-label="An ink-sketch birthday cake on a table">
     <defs id="defs">
       <filter id="bd-rough" x="-3%" y="-3%" width="106%" height="106%">
         <feTurbulence type="fractalNoise" baseFrequency="0.45" numOctaves="2" seed="4"/>
@@ -37,9 +39,11 @@
     </defs>
     <g id="art" filter="url(#bd-rough)"></g>
     <g id="fx"></g>
-  </svg>
+  </svg></div>
+  <div class="foot">
   <div class="hint" id="hint"></div>
-    <button id="replay">↻ Play again</button>
+  <br><button id="replay">↻ Play again</button>
+  </div>
 </div>
 
 <script>
@@ -177,7 +181,7 @@ const art=document.getElementById('art');
 const BALLOONS=[];
 /* party decor: bunting + balloons */
 grp({id:'decor'});
-(()=>{const sw=t=>[24+432*t,48+34*Math.sin(Math.PI*t)];
+(()=>{grp({id:'bunting'});const sw=t=>[24+432*t,48+34*Math.sin(Math.PI*t)];
   const cols=[PAL.red,PAL.yel,PAL.teal,PAL.blu,PAL.grn,PAL.red,PAL.yel,PAL.teal,PAL.blu,PAL.grn];const N=10;
   cols.forEach((col,i)=>{const ta=(i+0.18)/N,tb=(i+0.82)/N,a=sw(ta),b=sw(tb),m=sw((ta+tb)/2);const tip=[m[0]+(m[0]-240)*0.02,m[1]+27];
     const P=[a,[(a[0]+b[0])/2,(a[1]+b[1])/2-1],b,[(b[0]+tip[0])/2+1,(b[1]+tip[1])/2],tip,[(a[0]+tip[0])/2-1,(a[1]+tip[1])/2]];
@@ -186,13 +190,14 @@ grp({id:'decor'});
     stroke('flo1'+i,[[a[0]-1,a[1]+1],tip],{...OUT(m),w:3,max:3.2,t0:3,t1:2});stroke('flo2'+i,[tip,[b[0]+1.5,b[1]+1]],{...OUT(m),w:3.4,max:3.6,t0:2,t1:5});});
   const S=[];for(let t=0;t<=1.001;t+=.02)S.push(sw(t));stroke('bunt',S,{...SEC,w:2.4,t0:4,t1:4});
   [[24,48],[456,48]].forEach((p,i)=>{E('circle',{cx:p[0],cy:p[1],r:3.4,fill:PAL.wood.c});stroke('pin'+i,ell(p[0],p[1],3.6,3.6,0,320,30),{w:1.5,t0:1,t1:1,press:0})});
+  pop();
   function balloon(key,x,y,col,ax,ay){const str=grp();
     stroke(key+'str',catmull([[x,y+33],[x+5,y+70],[x-6,y+120],[(x+ax)/2+4,(y+ay)/2+70],[ax,ay]],false,8),{w:1.5,t0:2,t1:3,press:.2,wob:.4},INK,.9);pop();const g=grp();
     const P=[];for(let a=0;a<360;a+=30){const c=Math.cos(a*deg),s=Math.sin(a*deg);P.push([x+23*c*(s>0?1-0.2*s:1),y+28*s])}
     const f=fillShape(key,P,col.c,{j:1,offM:2.6});mottle(f.d,col.d,.45);
     clipOpen(f.clip);stroke(key+'st',ell(x,y,19,24,-30,100,8),{w:10,t0:12,t1:12},col.d,.45);stroke(key+'gl',ell(x,y,15,19,200,245,6),{w:5,t0:5,t1:6},'#fff',.92);clipClose();
     outline(key,f.line,[x,y],{hairs:3});
-    const K=[[x-4.5,y+33.5],[x+4.5,y+33.5],[x,y+27]];E('path',{d:polyD(K),fill:col.d});stroke(key+'kn',[...K,K[0]],{w:1.8,t0:1,t1:1,press:0});pop();BALLOONS.push({g,str,x,y,col,popped:false});}
+    const K=[[x-4.5,y+33.5],[x+4.5,y+33.5],[x,y+27]];E('path',{d:polyD(K),fill:col.d});stroke(key+'kn',[...K,K[0]],{w:1.8,t0:1,t1:1,press:0});pop();BALLOONS.push({g,str,x,y,col,popped:false,lift:0,strT:''});}
   balloon('blA',62,172,PAL.red,44,450);balloon('blB',106,208,PAL.yel,46,450);
   balloon('blC',418,168,PAL.teal,436,450);balloon('blD',374,210,PAL.blu,434,450);
   hatchEll('blsA',45,452,6,2,{sp:2.4});hatchEll('blsB',435,452,6,2,{sp:2.4});
@@ -495,7 +500,18 @@ const who=NAME?NAME:'';
 
 let stage=0,fixed=0,bites=0;
 const svgEl=document.getElementById('stage');
-const toSvg=e=>{const p=svgEl.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svgEl.getScreenCTM().inverse())};
+const toSvg=e=>{const p=svgEl.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(art.getScreenCTM().inverse())};
+/* tall phone screens: keep the bunting at the top, move the scene down to fill the height */
+(()=>{const bnt=document.getElementById('bunting');const hold=E('g',{filter:'url(#bd-rough)'},svgEl);svgEl.insertBefore(hold,art);hold.appendChild(bnt);
+  const fit=()=>{const w=svgEl.clientWidth||1;const wrap=document.querySelector('.wrap');
+    const used=$('title').offsetHeight+document.querySelector('.foot').offsetHeight+60;
+    const avail=window.innerHeight-used;const want=480*avail/w;const extra=Math.max(0,Math.min(260,want-524));
+    svgEl.setAttribute('viewBox',`0 36 480 ${f1(524+extra)}`);
+    art.setAttribute('transform',`translate(0 ${f1(extra)})`);fx.setAttribute('transform',`translate(0 ${f1(extra)})`);
+    const LF=[.8,.62,.86,.58];BALLOONS.forEach((b,i)=>{b.lift=extra*LF[i];const top=b.y+33,len=450-top,sy=(len+b.lift)/len;
+      b.strT=`translate(0 450) scale(1 ${sy.toFixed(4)}) translate(0 -450)`;b.g.setAttribute('transform',`translate(0 ${f1(-b.lift)})`);
+      if(!b.popped)b.str.setAttribute('transform',b.strT)})};
+  fit();addEventListener('resize',fit)})();
 const occupied=i=>TILES.some(u=>u.done&&u.cell===CELLS[i]);
 TILES.forEach(t=>{t.home={...t.cur};t.busy=false});
 let drag=null;
@@ -514,7 +530,7 @@ const endDrag=async e=>{if(!drag||e.pointerId!==drag.id)return;const t=drag.t;dr
   const slot={dx:CELLS[best][0]-t.cell[0],dy:CELLS[best][1]-t.cell[1],rot:0,sc:1};
   if(CELLS[best]!==t.cell||occupied(best)){
     await moveTo(t,slot,260,easeOut);thumbs(false);
-    say(`Oops! 👎 <b>${t.ch}</b> doesn't go there. The boxes must spell <b>H&nbsp;B&nbsp;D</b>.`);
+    say('Oops! 👎 Wrong box.');
     await sleep(650);await moveTo(t,t.home,520,easeBack);wobbleTile(t);t.busy=false;return}
   t.done=true;
   TILES.forEach(u=>{if(u.done||u===t)return;const ux=u.cell[0]+u.cur.dx,uy=u.cell[1]+u.cur.dy;if(Math.hypot(ux-t.cell[0],uy-t.cell[1])<40){
@@ -532,16 +548,17 @@ svgEl.addEventListener('touchmove',e=>{if(drag||pinDrag)e.preventDefault()},{pas
 pin.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();pinDrag={id:e.pointerId};try{svgEl.setPointerCapture(e.pointerId)}catch(_){}
   const p=toSvg(e);const s={...PIN};tween(180,k=>{PIN.r=s.r+(-125-s.r)*k;PIN.x=s.x+(p.x-s.x)*k;PIN.y=s.y+(p.y-34-s.y)*k;setPin()})});
 svgEl.addEventListener('pointermove',e=>{if(!pinDrag||e.pointerId!==pinDrag.id)return;const p=toSvg(e);PIN.x=p.x;PIN.y=p.y-34;PIN.r=-125;setPin();
-  BALLOONS.forEach(b=>{if(b.popped)return;const dx=(PIN.x-b.x)/24,dy=(PIN.y-b.y)/29;if(dx*dx+dy*dy<1)popBalloon(b)})});
+  BALLOONS.forEach(b=>{if(b.popped)return;const dx=(PIN.x-b.x)/24,dy=(PIN.y-(b.y-b.lift))/29;if(dx*dx+dy*dy<1)popBalloon(b)})});
 const endPin=async e=>{if(!pinDrag||e.pointerId!==pinDrag.id)return;pinDrag=null;const s={...PIN};
   await tween(480,k=>{PIN.x=s.x+(pinHome.x-s.x)*k;PIN.y=s.y+(pinHome.y-s.y)*k;PIN.r=s.r+(pinHome.r-s.r)*k;setPin()},easeBack)};
 svgEl.addEventListener('pointerup',endPin);svgEl.addEventListener('pointercancel',endPin);
-async function popBalloon(b){b.popped=true;popped++;b.g.setAttribute('opacity',0);confetti(16,b.x,b.y);hop();
+async function popBalloon(b){b.popped=true;popped++;b.g.setAttribute('opacity',0);confetti(16,b.x,b.y-b.lift);hop();
+  const bp=(s)=>b.burst.setAttribute('transform',`translate(0 ${f1(-b.lift)}) translate(${b.x} ${b.y}) scale(${s.toFixed(3)}) translate(${-b.x} ${-b.y})`);
   flash(popped<BALLOONS.length?'💥 <b>POP!</b>':'💥 All balloons popped! You really don\'t like clutter, huh? 😄',popped<BALLOONS.length?1200:2600);
   b.burst.setAttribute('opacity',1);
-  tween(700,(k,r)=>b.str.setAttribute('transform',`translate(0 ${f1(140*r*r)})`),lin).then(()=>b.str.setAttribute('opacity',0));
+  tween(700,(k,r)=>b.str.setAttribute('transform',`translate(0 ${f1(140*r*r)}) ${b.strT}`),lin).then(()=>b.str.setAttribute('opacity',0));
   tween(250,k=>b.str.setAttribute('opacity',1-k*.4));
-  await tween(260,k=>popAt(b.burst,b.x,b.y,.4+k),easeBack);await tween(300,k=>{b.burst.setAttribute('opacity',1-k);popAt(b.burst,b.x,b.y,1.4+k*.4)})}
+  await tween(260,k=>bp(.4+k),easeBack);await tween(300,k=>{b.burst.setAttribute('opacity',1-k);bp(1.4+k*.4)})}
 
 async function approve(){badge.setAttribute('opacity',1);await tween(420,k=>popAt(badge,332,170,k),easeBack);
   $('title').textContent=who?`Happy Birthday, ${who}! 🎉`:'Happy Birthday! 🎉';$('title').classList.add('pop');setTimeout(()=>$('title').classList.remove('pop'),500);
@@ -551,7 +568,7 @@ async function approve(){badge.setAttribute('opacity',1);await tween(420,k=>popA
   knife.setAttribute('opacity',1);await tween(400,k=>{KN.y=300-30*(1-k);setKnife()},easeBack);
   stage=2;cakeHit.style.pointerEvents='auto';cakeHit.classList.add('tap')}
 
-cakeHit.addEventListener('click',async()=>{if(stage<2){thumbs(false);say('Not yet! 👎 Fix the topper first: drag the letters to spell <b>H&nbsp;B&nbsp;D</b>.');return}if(stage!==2)return;resetHands();stage=3;cakeHit.style.pointerEvents='none';
+cakeHit.addEventListener('click',async()=>{if(stage<2){thumbs(false);say('Not yet! 👎 Fix the topper first.');return}if(stage!==2)return;resetHands();stage=3;cakeHit.style.pointerEvents='none';
   const s={x:KN.x,y:KN.y,r:KN.r};await tween(500,k=>{KN.x=s.x+(244-s.x)*k;KN.y=s.y+(222-s.y)*k;KN.r=s.r*(1-k);setKnife()},easeIO);
   await tween(520,k=>{KN.y=222+150*k;setKnife()},easeIO);[cutBase,cutTop,crumbs].forEach(g=>g.setAttribute('opacity',1));
   await tween(380,k=>{KN.y=372-150*k;setKnife()},easeOut);
@@ -572,7 +589,7 @@ sliceG.addEventListener('click',async()=>{if(stage!==4)return;const b=BITES[bite
 async function finale(){await tween(400,k=>sv.setAttribute('opacity',1-k));sv.style.pointerEvents='none';
   $('title').textContent=who?`Happy Birthday, ${who}! 🎂`:'Happy Birthday! 🎂';
   $('sub').textContent='Plate clean. Pixels aligned. Year levelled up.';
-  say(`Wishing you a year of <b>great ideas</b>, clean grids and zero last-minute changes.<br>Thank you for leading us${who?', '+who:''} 💛`);
+  say('');
   crackers();hop();clap(8);setTimeout(()=>confetti(60,240,140),400);$('replay').style.display='inline-block'}
 
 $('replay').addEventListener('click',()=>location.reload());
